@@ -678,10 +678,10 @@ class TableTopSegmentor(object):
                 y_padding = torch.round((y_max - y_min).float() * self.params['padding_percentage']).item()
 
                 # Pad and be careful of boundaries
-                x_min = max(x_min - x_padding, 0)
-                x_max = min(x_max + x_padding, W-1)
-                y_min = max(y_min - y_padding, 0)
-                y_max = min(y_max + y_padding, H-1)
+                x_min = int(max(x_min - x_padding, 0))
+                x_max = int(min(x_max + x_padding, W-1))
+                y_min = int(max(y_min - y_padding, 0))
+                y_max = int(min(y_max + y_padding, H-1))
                 crop_indices[mask_id.item()] = [x_min, y_min, x_max, y_max] # save crop indices
 
                 # Crop
@@ -732,7 +732,6 @@ class TableTopSegmentor(object):
                 # Set refined mask
                 h_idx, w_idx = torch.nonzero(resized_mask).t()
                 refined_masks[i, y_min:y_max+1, x_min:x_max+1][h_idx, w_idx] = mask_id
-
 
         # Open/close morphology stuff, for synthetically-trained RRN
         if self.params['final_close_morphology']:
